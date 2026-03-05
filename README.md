@@ -8,7 +8,7 @@ Requirements:
 
 - Users can log in by providing the correct credentials.
 
-    - The API must ensure the privacy of user data, including password hashing and the use of JWT.
+- The API must ensure the privacy of user data, including password hashing and the use of JWT.
 
 1.  Post management:
 
@@ -26,13 +26,13 @@ Requirements:
 
 - If one friend deletes the other from their friends list, they also unsubscribe. The second user must remain a subscriber.
 
-    - Friends can send messages to each other (no chat implementation is required; users can request correspondence using a request).
+- Friends can send messages to each other (no chat implementation is required; users can request correspondence using a request).
 
 3.  Subscriptions and activity feed:
 
 - The user's activity feed should display the latest posts from the users they subscribe to.
 
-    - The activity feed should support pagination and sorting by post creation time.
+- The activity feed should support pagination and sorting by post creation time.
 
 4. Error handling:
 
