@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import ru.job4j.media.repository.FileRepository;
 import ru.job4j.media.repository.MessageRepository;
 import ru.job4j.media.repository.PostRepository;
@@ -17,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles("test")
 public class FileTest {
 
     @Autowired
@@ -43,7 +45,7 @@ public class FileTest {
     public void whensSaveFile_thenFindById() {
         File file = new File(null, "test", "/test/test.jpg", LocalDateTime.now());
         fileRepository.save(file);
-        var foundedFile = fileRepository.findById(1L);
+        var foundedFile = fileRepository.findById(file.getId());
         assertThat(foundedFile).isPresent();
     }
 

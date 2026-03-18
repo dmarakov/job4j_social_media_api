@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import ru.job4j.media.entity.Post;
 import ru.job4j.media.entity.User;
 
@@ -35,6 +36,7 @@ public interface PostRepository extends ListCrudRepository<Post, Long>, PagingAn
     int deleteAttachedFilesFromPost(@Param("post_id") Long postId);
 
     @Modifying(clearAutomatically = true)
+    @Transactional
     @Query(value = """
         DELETE FROM Post post where post.id = :post_id
         """)
@@ -50,4 +52,16 @@ public interface PostRepository extends ListCrudRepository<Post, Long>, PagingAn
         ORDER BY post.createdAt DESC
         """)
     Page<Post> findPostsOfSubscribers(@Param("userId") Long userId, Pageable pageable);
+
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query("""
+    UPDATE Post p
+    SET p.text = :#{#post.text},
+        p.summary = :#{#post.summary},
+        p.createdAt = :#{#post.createdAt},
+        p.user = :#{#post.user}
+    WHERE p.id = :#{#post.id}
+    """)
+    int update(@Param("post") Post post);
 }

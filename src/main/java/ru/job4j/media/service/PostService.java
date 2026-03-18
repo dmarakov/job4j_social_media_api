@@ -13,6 +13,7 @@ import ru.job4j.media.repository.PostRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +21,26 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final FileRepository fileRepository;
+
+    public Post save(Post post) {
+        return postRepository.save(post);
+    }
+
+    public boolean update(Post post) {
+        return postRepository.update(post) > 0L;
+    }
+
+    public Optional<Post> findById(Long id) {
+        return postRepository.findById(id);
+    }
+
+    public boolean deleteById(Long id) {
+        return postRepository.deletePostByPostId(id) > 0L;
+    }
+
+    public List<Post> findAll() {
+        return postRepository.findAll();
+    }
 
     @Transactional
     public Post createNewPost(User user, String text, String summary, List<File> files) {
