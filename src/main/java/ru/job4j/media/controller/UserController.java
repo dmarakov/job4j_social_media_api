@@ -50,13 +50,17 @@ public class UserController {
         if (userService.update(user)) {
             return ResponseEntity.ok().build();
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @PatchMapping
     @ResponseStatus(HttpStatus.OK)
-    public void change(@RequestBody User user) {
-        userService.update(user);
+    public ResponseEntity<Void> change(@RequestBody User user) {
+        if (userService.update(user)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @DeleteMapping("/{userId}")
