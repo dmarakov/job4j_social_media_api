@@ -12,11 +12,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.job4j.media.entity.Post;
+import ru.job4j.media.entity.dto.UserPostDto;
 import ru.job4j.media.service.PostService;
+
+import java.util.List;
 
 @AllArgsConstructor
 @RestController
@@ -70,5 +74,10 @@ public class PostController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @GetMapping("/posts/byuser")
+    public List<UserPostDto> getPostsByUsersId(@RequestParam List<Long> userIds) {
+        return postService.getPostsByUsersId(userIds);
     }
 }

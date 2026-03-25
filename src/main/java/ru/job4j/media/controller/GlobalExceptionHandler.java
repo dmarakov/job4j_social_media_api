@@ -23,8 +23,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = {DataIntegrityViolationException.class})
     public void catchDataIntergrityViolationException(Exception e, HttpServletRequest request,
         HttpServletResponse response)
-        throws IOException
-    {
+        throws IOException {
         Map<String, String> details = new HashMap<>();
         details.put("message", e.getMessage());
         details.put("type", String.valueOf(e.getClass()));

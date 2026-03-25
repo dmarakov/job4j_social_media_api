@@ -7,11 +7,14 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.job4j.media.entity.File;
 import ru.job4j.media.entity.Post;
 import ru.job4j.media.entity.User;
+import ru.job4j.media.entity.dto.UserPostDto;
 import ru.job4j.media.repository.FileRepository;
 import ru.job4j.media.repository.PostRepository;
+import ru.job4j.media.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +24,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final FileRepository fileRepository;
+    private final UserRepository userRepository;
 
     public Post save(Post post) {
         return postRepository.save(post);
@@ -76,5 +80,14 @@ public class PostService {
         post.setFiles(new ArrayList<>(savedFile));
 
         return post;
+    }
+
+    public List<UserPostDto> getPostsByUsersId(List<Long> usersId) {
+        List<User> userList = userRepository.findAllById(usersId);
+        return userList.stream().map(user -> {
+            List<Post> userPosts = postRepository.findByUser(user) == null ? Collections.emptyList() : postRepository.findByUser(user);
+            return new UserPostDto(user.getId(), user.getName(), userPosts);
+        })
+            .toList();
     }
 }
