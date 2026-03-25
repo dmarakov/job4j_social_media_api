@@ -62,10 +62,8 @@ public class PostController {
     public ResponseEntity<Void> change(@RequestBody Post post) {
         if (postService.update(post)) {
             return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @DeleteMapping("/{postId}")
