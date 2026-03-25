@@ -1,9 +1,11 @@
 package ru.job4j.media.controller;
 
 import jakarta.annotation.Nonnull;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -24,6 +26,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
+@Validated
 @RequestMapping("api/post")
 public class PostController {
 
@@ -75,7 +78,10 @@ public class PostController {
     }
 
     @GetMapping("/posts/byuser")
-    public List<UserPostDto> getPostsByUsersId(@RequestParam List<Long> userIds) {
+    public List<UserPostDto> getPostsByUsersId(
+        @RequestParam
+        @NotEmpty(message = "Список userIds не должен быть пустым")
+        List<Long> userIds) {
         return postService.getPostsByUsersId(userIds);
     }
 }
