@@ -1,5 +1,6 @@
 package ru.job4j.media.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -27,6 +28,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Schema(description = "Post Model Information")
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

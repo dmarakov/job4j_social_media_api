@@ -1,5 +1,11 @@
 package ru.job4j.media.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Nonnull;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +24,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.job4j.media.entity.User;
 import ru.job4j.media.service.UserService;
 
+@Tag(name = "UserController", description = "UserController management APIs")
 @AllArgsConstructor
 @RestController
 @RequestMapping("api/user")
@@ -25,6 +32,17 @@ public class UserController {
 
     private final UserService userService;
 
+    @Operation(
+        summary = "Retrieve a User by userId",
+        description = "Get a User object by specifying its userId. The response contains userId, name, email and other user details.",
+        tags = { "User", "GET" })
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = User.class), mediaType = "application/json")
+        }),
+        @ApiResponse(responseCode = "404", description = "User not found"),
+        @ApiResponse(responseCode = "400", content = { @Content })
+    })
     @GetMapping("/{userId}")
     public ResponseEntity<User> get(@PathVariable @Nonnull Long userId) {
         return userService.findById(userId)
@@ -32,6 +50,16 @@ public class UserController {
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @Operation(
+        summary = "Create a new User",
+        description = "Create a new User. Returns created User with generated id.",
+        tags = { "User", "POST" })
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", content = {
+            @Content(schema = @Schema(implementation = User.class), mediaType = "application/json")
+        }),
+        @ApiResponse(responseCode = "400", content = { @Content })
+    })
     @PostMapping
     public ResponseEntity<User> save(@RequestBody User user) {
         userService.save(user);
@@ -45,6 +73,15 @@ public class UserController {
             .body(user);
     }
 
+    @Operation(
+        summary = "Update an existing User",
+        description = "Update a User completely. Full User object must be provided.",
+        tags = { "User", "PUT" })
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "User updated successfully"),
+        @ApiResponse(responseCode = "404", description = "User not found"),
+        @ApiResponse(responseCode = "400", content = { @Content })
+    })
     @PutMapping
     public ResponseEntity<User> update(@RequestBody User user) {
         if (userService.update(user)) {
@@ -53,6 +90,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
+    @Operation(
+        summary = "Partially update a User",
+        description = "Update selected fields of a User.",
+        tags = { "User", "PATCH" })
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "User updated successfully"),
+        @ApiResponse(responseCode = "404", description = "User not found"),
+        @ApiResponse(responseCode = "400", content = { @Content })
+    })
     @PatchMapping
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Void> change(@RequestBody User user) {
@@ -63,6 +109,15 @@ public class UserController {
         }
     }
 
+    @Operation(
+        summary = "Delete a User by userId",
+        description = "Delete a User by specifying its userId.",
+        tags = { "User", "DELETE" })
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "User deleted successfully"),
+        @ApiResponse(responseCode = "404", description = "User not found"),
+        @ApiResponse(responseCode = "400", content = { @Content })
+    })
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> removeById(@PathVariable Long userId) {
         if (userService.deleteById(userId)) {
