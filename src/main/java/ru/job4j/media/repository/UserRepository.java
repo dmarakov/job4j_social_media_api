@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import ru.job4j.media.entity.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends ListCrudRepository<User, Long> {
@@ -33,4 +34,9 @@ public interface UserRepository extends ListCrudRepository<User, Long> {
         where u.id=:#{#user.id}
         """)
     int update(@Param("user") User user);
+
+    @Transactional
+    @Query("""
+        select distinct u from User u left join fetch u.userPosts where u.id in :ids
+        """) List<User> findUserWithPosts(@Param("ids") List<Long> ids);
 }

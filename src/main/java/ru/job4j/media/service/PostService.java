@@ -14,7 +14,6 @@ import ru.job4j.media.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,7 +56,6 @@ public class PostService {
             .text(text)
             .summary(summary)
             .createdAt(LocalDateTime.now())
-            .user(user)
             .files(new ArrayList<>(savedFile))
             .build();
         return postRepository.save(post);
@@ -70,7 +68,6 @@ public class PostService {
 
         post.setText(newPost.getText());
         post.setSummary(newPost.getSummary());
-        post.setUser(newPost.getUser());
 
         List<File> newPostFiles = newPost.getFiles();
         List<File> savedFile = newPostFiles == null
@@ -83,11 +80,9 @@ public class PostService {
     }
 
     public List<UserPostDto> getPostsByUsersId(List<Long> usersId) {
-        List<User> userList = userRepository.findAllById(usersId);
-        return userList.stream().map(user -> {
-            List<Post> userPosts = postRepository.findByUser(user) == null ? Collections.emptyList() : postRepository.findByUser(user);
-            return new UserPostDto(user.getId(), user.getName(), userPosts);
-        })
+        List<User> userList = userRepository.findUserWithPosts(usersId);
+        return userList.stream()
+            .map(user -> new UserPostDto(user.getId(), user.getName(), user.getUserPosts()))
             .toList();
     }
 }

@@ -12,6 +12,8 @@ import ru.job4j.media.repository.UserRelationRepository;
 import ru.job4j.media.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,6 +30,7 @@ public class MessageTest {
     private PostRepository postRepository;
     @Autowired
     private UserRelationRepository userRelationRepository;
+    List<Post> posts = new ArrayList<>();
 
     @BeforeEach
     void setup() {
@@ -39,8 +42,9 @@ public class MessageTest {
 
     @Test
     public void whensSaveFile_thenFindById() {
-        User fromUser = new User(null, "FromUser", "fromUser@email.com", "password");
-        User toUser = new User(null, "ToUser", "toser@email.com", "password");
+
+        User fromUser = new User(null, "FromUser", "fromUser@email.com", "password", posts);
+        User toUser = new User(null, "ToUser", "toser@email.com", "password", posts);
         userRepository.save(fromUser);
         userRepository.save(toUser);
         Message message = new Message(null, fromUser, toUser, "Text", LocalDateTime.now());
@@ -51,8 +55,8 @@ public class MessageTest {
 
     @Test
     public void whenFindAll_thenReturnAllPersons() {
-        User fromUser = new User(null, "FromUser", "fromUser@email.com", "password");
-        User toUser = new User(null, "ToUser", "toser@email.com", "password");
+        User fromUser = new User(null, "FromUser", "fromUser@email.com", "password", posts);
+        User toUser = new User(null, "ToUser", "toser@email.com", "password", posts);
         userRepository.save(fromUser);
         userRepository.save(toUser);
         Message message1 = new Message(null, fromUser, toUser, "Text", LocalDateTime.now());

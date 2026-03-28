@@ -9,13 +9,11 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import ru.job4j.media.entity.Post;
-import ru.job4j.media.entity.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PostRepository extends ListCrudRepository<Post, Long>, PagingAndSortingRepository<Post, Long> {
-    List<Post> findByUser(User user);
 
     List<Post> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 
@@ -42,15 +40,14 @@ public interface PostRepository extends ListCrudRepository<Post, Long>, PagingAn
         """)
     int deletePostByPostId(@Param("post_id") Long postId);
 
-    @Query(value = """
-        SELECT post from Post as post
-        WHERE post.user in (
-        SELECT ur.fromUser
-               from UserRelation ur
-               where ur.toUser.id = :userId
-        )
-        ORDER BY post.createdAt DESC
-        """)
+    @Query("""
+    SELECT post
+    FROM UserRelation ur
+    JOIN ur.fromUser u
+    JOIN u.userPosts post
+    WHERE ur.toUser.id = :userId
+    ORDER BY post.createdAt DESC
+""")
     Page<Post> findPostsOfSubscribers(@Param("userId") Long userId, Pageable pageable);
 
     @Transactional
@@ -59,8 +56,7 @@ public interface PostRepository extends ListCrudRepository<Post, Long>, PagingAn
     UPDATE Post p
     SET p.text = :#{#post.text},
         p.summary = :#{#post.summary},
-        p.createdAt = :#{#post.createdAt},
-        p.user = :#{#post.user}
+        p.createdAt = :#{#post.createdAt}
     WHERE p.id = :#{#post.id}
     """)
     int update(@Param("post") Post post);

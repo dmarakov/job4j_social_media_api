@@ -11,6 +11,9 @@ import ru.job4j.media.repository.PostRepository;
 import ru.job4j.media.repository.UserRelationRepository;
 import ru.job4j.media.repository.UserRepository;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -37,8 +40,9 @@ public class UserRelationTest {
 
     @Test
     public void whenSaveRelation_thenFindById() {
-        User fromUser = new User(null, "FromUser", "from@email.com", "password");
-        User toUser = new User(null, "ToUser", "to@email.com", "password");
+        List<Post> emptyPosts = new ArrayList<>();
+        User fromUser = new User(null, "FromUser", "from@email.com", "password", emptyPosts);
+        User toUser = new User(null, "ToUser", "to@email.com", "password", emptyPosts);
 
         userRepository.save(fromUser);
         userRepository.save(toUser);
@@ -54,8 +58,9 @@ public class UserRelationTest {
 
     @Test
     public void whenFindAll_thenReturnAllRelations() {
-        User fromUser = new User(null, "FromUser", "from@email.com", "password");
-        User toUser = new User(null, "ToUser", "to@email.com", "password");
+        List<Post> emptyPosts = new ArrayList<>();
+        User fromUser = new User(null, "FromUser", "from@email.com", "password", emptyPosts);
+        User toUser = new User(null, "ToUser", "to@email.com", "password", emptyPosts);
 
         userRepository.save(fromUser);
         userRepository.save(toUser);
@@ -73,9 +78,10 @@ public class UserRelationTest {
 
     @Test
     public void whenFindAllUserSubscriber_thenReturnListOfSubscribers() {
-        User user1 = new User(null, "user1", "from@email.com", "password");
-        User user2 = new User(null, "user2", "to1@email.com", "password");
-        User user3 = new User(null, "user3", "to2@email.com", "password");
+        List<Post> emptyPosts = new ArrayList<>();
+        User user1 = new User(null, "user1", "from@email.com", "password", emptyPosts);
+        User user2 = new User(null, "user2", "to1@email.com", "password", emptyPosts);
+        User user3 = new User(null, "user3", "to2@email.com", "password", emptyPosts);
 
         userRepository.save(user1);
         userRepository.save(user2);
@@ -95,9 +101,10 @@ public class UserRelationTest {
 
     @Test
     public void whenFindAllUserFriends_thenReturnListOfFriends() {
-        User user1 = new User(null, "user1", "from@email.com", "password");
-        User user2 = new User(null, "user2", "to1@email.com", "password");
-        User user3 = new User(null, "user3", "to2@email.com", "password");
+        List<Post> emptyPosts = new ArrayList<>();
+        User user1 = new User(null, "user1", "from@email.com", "password", emptyPosts);
+        User user2 = new User(null, "user2", "to1@email.com", "password", emptyPosts);
+        User user3 = new User(null, "user3", "to2@email.com", "password", emptyPosts);
 
         userRepository.save(user1);
         userRepository.save(user2);
