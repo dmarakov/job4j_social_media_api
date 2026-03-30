@@ -33,7 +33,7 @@ public class User {
     private String name;
     private String email;
     private String passwordHash;
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private List<Post> userPosts;
 }
