@@ -10,6 +10,9 @@ import jakarta.annotation.Nonnull;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -24,6 +27,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.job4j.media.entity.User;
 import ru.job4j.media.service.UserService;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @Tag(name = "UserController", description = "UserController management APIs")
 @AllArgsConstructor
 @RestController
@@ -44,6 +48,7 @@ public class UserController {
         @ApiResponse(responseCode = "400", content = { @Content })
     })
     @GetMapping("/{userId}")
+    @PostAuthorize("returnObject.body.id == authentication.principal.id or hasRole('ADMIN')")
     public ResponseEntity<User> get(@PathVariable @Nonnull Long userId) {
         return userService.findById(userId)
             .map(ResponseEntity::ok)
@@ -61,6 +66,7 @@ public class UserController {
         @ApiResponse(responseCode = "400", content = { @Content })
     })
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> save(@RequestBody User user) {
         userService.save(user);
         var uri = ServletUriComponentsBuilder
@@ -83,6 +89,7 @@ public class UserController {
         @ApiResponse(responseCode = "400", content = { @Content })
     })
     @PutMapping
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<User> update(@RequestBody User user) {
         if (userService.update(user)) {
             return ResponseEntity.ok().build();
@@ -101,6 +108,7 @@ public class UserController {
     })
     @PatchMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<Void> change(@RequestBody User user) {
         if (userService.update(user)) {
             return ResponseEntity.ok().build();
@@ -119,6 +127,7 @@ public class UserController {
         @ApiResponse(responseCode = "400", content = { @Content })
     })
     @DeleteMapping("/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> removeById(@PathVariable Long userId) {
         if (userService.deleteById(userId)) {
             return ResponseEntity.noContent().build();

@@ -11,6 +11,8 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,6 +49,7 @@ public class PostController {
         @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = Post.class), mediaType = "application/json") }),
         @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema()) }) })
     @GetMapping("/{postId}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<Post> get(@PathVariable @Nonnull Long postId) {
         return postService.findById(postId)
             .map(ResponseEntity::ok)
@@ -64,6 +67,7 @@ public class PostController {
         @ApiResponse(responseCode = "400", content = { @Content })
     })
     @PostMapping
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<Post> save(@RequestBody Post post) {
         postService.save(post);
         var uri = ServletUriComponentsBuilder
@@ -86,6 +90,7 @@ public class PostController {
         @ApiResponse(responseCode = "400", content = { @Content })
     })
     @PutMapping
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<Post> update(@RequestBody Post post) {
         if (postService.update(post)) {
             return ResponseEntity.ok().build();
@@ -104,6 +109,7 @@ public class PostController {
     })
     @PatchMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<Void> change(@RequestBody Post post) {
         if (postService.update(post)) {
             return ResponseEntity.ok().build();
@@ -121,6 +127,7 @@ public class PostController {
         @ApiResponse(responseCode = "400", content = { @Content })
     })
     @DeleteMapping("/{postId}")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<Void> removeById(@PathVariable long postId) {
         if (postService.deleteById(postId)) {
             return ResponseEntity.noContent().build();
@@ -139,6 +146,7 @@ public class PostController {
         @ApiResponse(responseCode = "400", content = { @Content })
     })
     @GetMapping("/posts/byuser")
+    @PostAuthorize("hasRole('ADMIN')")
     public List<UserPostDto> getPostsByUsersId(
         @RequestParam
         @NotEmpty(message = "Список userIds не должен быть пустым")
